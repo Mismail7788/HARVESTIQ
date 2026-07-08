@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HarvestIQ — AI Disease Scan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      background: #f0ece4;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #1a3a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+    }
+
+    .sidebar-logo {
+      padding: 28px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-logo h2 {
+      font-family: 'Playfair Display', serif;
+      color: #f5f0e8; font-size: 22px;
+    }
+
+    .sidebar-logo h2 span { color: #c8a84b; }
+    .sidebar-logo p { color: rgba(245,240,232,0.4); font-size: 12px; margin-top: 4px; }
+
+    .sidebar-nav { padding: 20px 0; flex: 1; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 24px; color: rgba(245,240,232,0.6);
+      cursor: pointer; font-size: 14px;
+      border-left: 3px solid transparent;
+      text-decoration: none; transition: all 0.2s;
+    }
+
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: #f5f0e8; }
+    .nav-item.active { background: rgba(200,168,75,0.1); color: #f5f0e8; border-left-color: #c8a84b; }
+    .nav-icon { font-size: 18px; }
+
+    .sidebar-footer {
+      padding: 20px 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .btn-back {
+      width: 100%; padding: 10px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(245,240,232,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; cursor: pointer;
+      font-size: 13px; transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .btn-back:hover { background: rgba(200,168,75,0.15); color: #f5f0e8; }
+
+    /* Main Content */
+    .main {
+      margin-left: 260px;
+      flex: 1; padding: 40px;
+    }
+
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px; color: #1a3a1a; margin-bottom: 8px;
+    }
+    .page-header p { color: #4a4a4a; font-size: 15px; }
+
+    /* Upload Card */
+    .upload-card {
+      background: white; border-radius: 16px;
+      padding: 32px; margin-bottom: 24px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+
+    .upload-area {
+      border: 2px dashed #c8d8c8;
+      border-radius: 14px; padding: 60px 40px;
+      text-align: center; cursor: pointer;
+      background: linear-gradient(135deg, #f8fdf8, #f0fdf4);
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+
+    .upload-area:hover {
+      border-color: #2d6a2d;
+      background: linear-gradient(135deg, #f0fdf4, #e8fdf0);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(45,106,45,0.12);
+    }
+
+    .upload-icon { font-size: 64px; margin-bottom: 16px; display: block; }
+    .upload-title { font-size: 18px; font-weight: 500; color: #1a3a1a; margin-bottom: 8px; }
+    .upload-subtitle { font-size: 13px; color: #888; }
+
+    .upload-btn {
+      display: inline-block; margin-top: 20px;
+      padding: 12px 28px;
+      background: #1a3a1a; color: #f5f0e8;
+      border-radius: 8px; font-size: 14px;
+      font-weight: 500; transition: all 0.2s;
+    }
+
+    .upload-area:hover .upload-btn { background: #2d6a2d; }
+
+    /* Preview */
+    .preview-section {
+      margin-top: 20px; display: none;
+      border-radius: 12px; overflow: hidden;
+      border: 1px solid #e0d9cc;
+    }
+
+    .preview-section img {
+      width: 100%; max-height: 280px;
+      object-fit: cover; display: block;
+    }
+
+    .preview-label {
+      padding: 10px 16px; background: #f8fdf8;
+      font-size: 12px; color: #666;
+      border-top: 1px solid #e0d9cc;
+    }
+
+    /* Loading */
+    .loading-card {
+      background: white; border-radius: 16px;
+      padding: 40px; text-align: center;
+      border: 1px solid rgba(0,0,0,0.06);
+      display: none; margin-bottom: 24px;
+    }
+
+    .loading-spinner {
+      width: 56px; height: 56px;
+      border: 4px solid #e0d9cc;
+      border-top-color: #2d6a2d;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #1a3a1a; margin-bottom: 8px; }
+    .loading-sub { font-size: 14px; color: #888; }
+
+    .loading-steps {
+      display: flex; justify-content: center;
+      gap: 24px; margin-top: 24px;
+    }
+
+    .step {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #aaa;
+    }
+
+    .step.done { color: #2d6a2d; }
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: #e0d9cc; }
+    .step.done .step-dot { background: #2d6a2d; }
+
+    /* Result */
+    .result-card {
+      background: white; border-radius: 16px;
+      padding: 32px; display: none;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-header {
+      display: flex; align-items: center;
+      gap: 16px; margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #f0ece4;
+    }
+
+    .result-badge {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, #1a3a1a, #2d6a2d);
+      border-radius: 14px; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 28px; flex-shrink: 0;
+    }
+
+    .result-title { font-family: 'Playfair Display', serif; font-size: 24px; color: #1a3a1a; }
+    .result-subtitle { font-size: 13px; color: #888; margin-top: 4px; }
+
+    .result-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 20px;
+    }
+
+    .result-metric {
+      background: #f8fdf8; border-radius: 12px;
+      padding: 16px; border: 1px solid #e8f5e9;
+    }
+
+    .metric-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 8px; }
+    .metric-value { font-family: 'Playfair Display', serif; font-size: 28px; color: #1a3a1a; }
+    .metric-sub { font-size: 12px; color: #888; margin-top: 4px; }
+
+    .conf-bar-wrap { margin-top: 10px; }
+    .conf-bar-bg { height: 8px; background: #e0d9cc; border-radius: 4px; }
+    .conf-bar-fill { height: 100%; background: linear-gradient(90deg, #2d6a2d, #4a9e4a); border-radius: 4px; transition: width 1.5s ease; width: 0%; }
+
+    .advisory-section {
+      background: linear-gradient(135deg, #f0fdf4, #f8fdf8);
+      border-radius: 12px; padding: 20px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .advisory-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .advisory-icon { font-size: 20px; }
+    .advisory-title { font-size: 14px; font-weight: 600; color: #1a3a1a; }
+    .advisory-text { font-size: 14px; color: #2d5a2d; line-height: 1.7; }
+
+    .scan-again-btn {
+      margin-top: 20px; width: 100%;
+      padding: 14px; background: #1a3a1a;
+      color: #f5f0e8; border: none; border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+    }
+
+    .scan-again-btn:hover { background: #2d6a2d; }
+
+    /* Error */
+    .error-card {
+      background: white; border-radius: 16px;
+      padding: 32px; text-align: center;
+      border: 1px solid #fecaca; display: none;
+    }
+
+    .error-icon { font-size: 48px; margin-bottom: 16px; }
+    .error-title { font-family: 'Playfair Display', serif; font-size: 22px; color: #dc2626; margin-bottom: 8px; }
+    .error-text { font-size: 14px; color: #888; }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>Harvest<span>IQ</span></h2>
+      <p>AI Disease Scanner</p>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="farmer.html" class="nav-item">
+        <span class="nav-icon">🏠</span> Dashboard
+      </a>
+      <a href="farmer.html#marketplace" class="nav-item">
+        <span class="nav-icon">🛒</span> Marketplace
+      </a>
+      <a href="scan.html" class="nav-item active">
+        <span class="nav-icon">🔬</span> AI Disease Scan
+      </a>
+      <a href="farmer.html#orders" class="nav-item">
+        <span class="nav-icon">📦</span> My Orders
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-back" onclick="window.location.href='farmer.html'">← Back to Dashboard</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="page-header">
+      <h1>🔬 AI Disease Scan</h1>
+      <p>Upload a crop or leaf image — our AI will detect diseases instantly</p>
+    </div>
+
+    <!-- Upload Card -->
+    <div class="upload-card">
+      <div class="upload-area" onclick="document.getElementById('file-input').click()">
+        <span class="upload-icon">🌿</span>
+        <div class="upload-title">Drop your crop image here</div>
+        <div class="upload-subtitle">or click to browse files</div>
+        <div class="upload-btn">Choose Image</div>
+      </div>
+      <div class="preview-section" id="preview-section">
+        <img id="preview-img" src="" alt="Preview">
+        <div class="preview-label" id="preview-label">📎 Image selected</div>
+      </div>
+      <input type="file" id="file-input" accept="image/*" style="display:none">
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-card" id="loading-card">
+      <div class="loading-spinner"></div>
+      <div class="loading-title">Analyzing Your Crop...</div>
+      <div class="loading-sub">Our AI is examining the image for diseases</div>
+      <div class="loading-steps">
+        <div class="step done"><div class="step-dot"></div>Image uploaded</div>
+        <div class="step done"><div class="step-dot"></div>Processing</div>
+        <div class="step"><div class="step-dot"></div>Detecting</div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="result-card" id="result-card">
+      <div class="result-header">
+        <div class="result-badge">🌱</div>
+        <div>
+          <div class="result-title" id="disease-name">Disease Name</div>
+          <div class="result-subtitle">AI Detection Result</div>
+        </div>
+      </div>
+
+      <div class="result-grid">
+        <div class="result-metric">
+          <div class="metric-label">Confidence Score</div>
+          <div class="metric-value" id="confidence-pct">0%</div>
+          <div class="conf-bar-wrap">
+            <div class="conf-bar-bg">
+              <div class="conf-bar-fill" id="conf-bar"></div>
+            </div>
+          </div>
+        </div>
+        <div class="result-metric">
+          <div class="metric-label">Detection Status</div>
+          <div class="metric-value" style="font-size:20px;margin-top:4px;">✅ Complete</div>
+          <div class="metric-sub">AI analysis done</div>
+        </div>
+      </div>
+
+      <div class="advisory-section">
+        <div class="advisory-header">
+          <span class="advisory-icon">💡</span>
+          <span class="advisory-title">Expert Advisory</span>
+        </div>
+        <div class="advisory-text" id="advisory-text"></div>
+      </div>
+
+      <button class="scan-again-btn" onclick="scanAgain()">🔄 Scan Another Image</button>
+    </div>
+
+    <!-- Error -->
+    <div class="error-card" id="error-card">
+      <div class="error-icon">❌</div>
+      <div class="error-title">Connection Failed</div>
+      <div class="error-text" id="error-text"></div>
+      <button class="scan-again-btn" style="margin-top:20px" onclick="scanAgain()">Try Again</button>
+    </div>
+
+  </div>
+
+  <script>
+    window.onload = function() {
+      const saved = localStorage.getItem('scanResult');
+      if (saved) {
+        const data = JSON.parse(saved);
+        showResult(data);
+        localStorage.removeItem('scanResult');
+      }
+    }
+
+    document.getElementById('file-input').addEventListener('change', async function() {
+      const file = this.files[0];
+      if (!file) return;
+
+      const preview = document.getElementById('preview-img');
+      preview.src = URL.createObjectURL(file);
+      document.getElementById('preview-section').style.display = 'block';
+      document.getElementById('preview-label').textContent = '📎 ' + file.name;
+
+      document.getElementById('result-card').style.display = 'none';
+      document.getElementById('error-card').style.display = 'none';
+      document.getElementById('loading-card').style.display = 'block';
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('http://127.0.0.1:5001/predict', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        document.getElementById('loading-card').style.display = 'none';
+
+        if (data.error) {
+          document.getElementById('error-card').style.display = 'block';
+          document.getElementById('error-text').textContent = data.error;
+          return;
+        }
+
+        localStorage.setItem('scanResult', JSON.stringify(data));
+        showResult(data);
+
+      } catch (err) {
+        document.getElementById('loading-card').style.display = 'none';
+        document.getElementById('error-card').style.display = 'block';
+        document.getElementById('error-text').textContent = 'Cannot connect to AI service! Make sure AI server is running on port 5001.';
+      }
+    });
+
+    function showResult(data) {
+      document.getElementById('result-card').style.display = 'block';
+      document.getElementById('disease-name').textContent = data.disease.replace(/_/g, ' ');
+      document.getElementById('confidence-pct').textContent = data.confidence + '%';
+      document.getElementById('advisory-text').textContent = data.advisory;
+      setTimeout(() => {
+        document.getElementById('conf-bar').style.width = data.confidence + '%';
+      }, 200);
+    }
+
+    function scanAgain() {
+      document.getElementById('result-card').style.display = 'none';
+      document.getElementById('error-card').style.display = 'none';
+      document.getElementById('preview-section').style.display = 'none';
+      document.getElementById('file-input').value = '';
+      localStorage.removeItem('scanResult');
+    }
+  </script>
+</body>
+</html>

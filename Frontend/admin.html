@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HarvestIQ — Admin Panel</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>Harvest<span>IQ</span></h2>
+      <p>Admin Panel</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showTab('dashboard', this)">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showTab('users', this)">
+        <span class="nav-icon">👥</span> All Users
+      </div>
+      <div class="nav-item" onclick="showTab('products', this)">
+        <span class="nav-icon">📦</span> All Products
+      </div>
+      <div class="nav-item" onclick="showTab('orders', this)">
+        <span class="nav-icon">🛒</span> All Orders
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="avatar">A</div>
+        <div>
+          <div class="user-name" id="user-name">Admin</div>
+          <div class="user-role">Admin Account</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">← Logout</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Dashboard Tab -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div class="page-header">
+        <h1>Admin Dashboard </h1>
+        <p>Monitor and manage the entire HarvestIQ platform</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value" id="total-users">0</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-value" id="total-products">0</div>
+          <div class="stat-label">Total Products</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-value" id="total-orders">0</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Quick Actions</div>
+        </div>
+        <div class="quick-grid">
+          <div class="quick-card" onclick="showTab('users', null)">
+            <div class="quick-icon">👥</div>
+            <div class="quick-label">Manage Users</div>
+          </div>
+          <div class="quick-card" onclick="showTab('products', null)">
+            <div class="quick-icon">📦</div>
+            <div class="quick-label">View Products</div>
+          </div>
+          <div class="quick-card" onclick="showTab('orders', null)">
+            <div class="quick-icon">🛒</div>
+            <div class="quick-label">View Orders</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="tab-content" id="tab-users">
+      <div class="page-header">
+        <h1>All Users 👥</h1>
+        <p>Manage all registered users</p>
+      </div>
+      <div class="section">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody id="users-body">
+            <tr><td colspan="5" class="loading">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Products Tab -->
+    <div class="tab-content" id="tab-products">
+      <div class="page-header">
+        <h1>All Products 📦</h1>
+        <p>View all listed products</p>
+      </div>
+      <div class="section">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody id="products-body">
+            <tr><td colspan="4" class="loading">Loading products...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div class="tab-content" id="tab-orders">
+      <div class="page-header">
+        <h1>All Orders 🛒</h1>
+        <p>View all platform orders</p>
+      </div>
+      <div class="section">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Farmer</th>
+              <th>Product</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body">
+            <tr><td colspan="5" class="loading">Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

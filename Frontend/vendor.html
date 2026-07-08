@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HarvestIQ — Vendor Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>Harvest<span>IQ</span></h2>
+      <p>Vendor Portal</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showTab('dashboard', this)">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showTab('add-product', this)">
+        <span class="nav-icon">➕</span> Add Product
+      </div>
+      <div class="nav-item" onclick="showTab('my-products', this)">
+        <span class="nav-icon">📦</span> My Products
+      </div>
+      <div class="nav-item" onclick="showTab('orders', this)">
+        <span class="nav-icon">🛒</span> Customer Orders
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="avatar">V</div>
+        <div>
+          <div class="user-name" id="user-name">Vendor</div>
+          <div class="user-role">Vendor Account</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">← Logout</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Dashboard Tab -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div class="page-header">
+        <h1>Vendor Dashboard 🏪</h1>
+        <p>Manage your products and orders</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-value" id="total-products">0</div>
+          <div class="stat-label">Total Products</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🛒</div>
+          <div class="stat-value" id="total-orders">0</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value">Active</div>
+          <div class="stat-label">Account Status</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Quick Actions</div>
+        </div>
+        <div class="quick-grid">
+          <div class="quick-card" onclick="showTab('add-product', null)">
+            <div class="quick-icon">➕</div>
+            <div class="quick-label">Add Product</div>
+          </div>
+          <div class="quick-card" onclick="showTab('my-products', null)">
+            <div class="quick-icon">📦</div>
+            <div class="quick-label">View Products</div>
+          </div>
+          <div class="quick-card" onclick="showTab('orders', null)">
+            <div class="quick-icon">🛒</div>
+            <div class="quick-label">View Orders</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Product Tab -->
+    <div class="tab-content" id="tab-add-product">
+      <div class="page-header">
+        <h1>Add Product ➕</h1>
+        <p>List a new product on the marketplace</p>
+      </div>
+      <div class="section">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="p-name" placeholder="e.g. DAP Fertilizer">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="p-category">
+              <option value="fertilizer">🌿 Fertilizer</option>
+              <option value="pesticide">🧪 Pesticide</option>
+              <option value="seed">🌱 Seed</option>
+              <option value="equipment">🚜 Equipment</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Price (Rs.)</label>
+            <input type="number" id="p-price" placeholder="e.g. 2500">
+          </div>
+          <div class="form-group">
+            <label>Stock Quantity</label>
+            <input type="number" id="p-stock" placeholder="e.g. 100">
+          </div>
+          <div class="form-group full">
+            <label>Description</label>
+            <textarea id="p-desc" rows="3" placeholder="Describe your product..."></textarea>
+          </div>
+        </div>
+        <button class="btn-sm" onclick="addProduct()">Add Product →</button>
+        <div id="product-msg" class="message"></div>
+      </div>
+    </div>
+
+    <!-- My Products Tab -->
+    <div class="tab-content" id="tab-my-products">
+      <div class="page-header">
+        <h1>My Products 📦</h1>
+        <p>Manage your listed products</p>
+      </div>
+      <div class="section">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="products-body">
+            <tr><td colspan="5" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div class="tab-content" id="tab-orders">
+      <div class="page-header">
+        <h1>Customer Orders 🛒</h1>
+        <p>View and manage incoming orders</p>
+      </div>
+      <div class="section">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Farmer</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body">
+            <tr><td colspan="6" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/vendor.js"></script>
+</body>
+</html>

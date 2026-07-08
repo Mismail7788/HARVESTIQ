@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HarvestIQ — Farmer Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>Harvest<span>IQ</span></h2>
+      <p> Farmer Portal </p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showTab('dashboard', this)">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showTab('marketplace', this)">
+        <span class="nav-icon">🛒</span> Marketplace
+      </div>
+      <div class="nav-item" onclick="window.location.href='scan.html'">
+        <span class="nav-icon">🔬</span> AI Disease Scan
+      </div>
+      <div class="nav-item" onclick="showTab('orders', this)">
+        <span class="nav-icon">📦</span> My Orders
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="avatar">F</div>
+        <div>
+          <div class="user-name" id="user-name">Farmer</div>
+          <div class="user-role">Farmer Account</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">← Logout</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Dashboard Tab -->
+    <div class="tab-content active" id="tab-dashboard">
+      <div class="page-header">
+        <h1>Good Morning! 🌾</h1>
+        <p>Here's your farming overview for today</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-value" id="total-orders">0</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔬</div>
+          <div class="stat-value" id="total-scans">0</div>
+          <div class="stat-label">Disease Scans</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🌱</div>
+          <div class="stat-value">Active</div>
+          <div class="stat-label">Account Status</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Quick Actions</div>
+        </div>
+        <div class="quick-grid">
+          <div class="quick-card" onclick="showTab('marketplace', null)">
+            <div class="quick-icon">🛒</div>
+            <div class="quick-label">Browse Products</div>
+          </div>
+          <div class="quick-card" onclick="window.location.href='scan.html'">
+            <div class="quick-icon">🔬</div>
+            <div class="quick-label">Scan Crop Disease</div>
+          </div>
+          <div class="quick-card" onclick="showTab('orders', null)">
+            <div class="quick-icon">📦</div>
+            <div class="quick-label">Track Orders</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Marketplace Tab -->
+    <div class="tab-content" id="tab-marketplace">
+      <div class="page-header">
+        <h1>Marketplace 🛒</h1>
+        <p>Browse and buy agricultural products</p>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Available Products</div>
+        </div>
+        <div class="products-grid" id="products-grid">
+          <div class="loading">Loading products...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div class="tab-content" id="tab-orders">
+      <div class="page-header">
+        <h1>My Orders 📦</h1>
+        <p>Track your purchase history</p>
+      </div>
+      <div class="section">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="orders-body">
+            <tr><td colspan="6" class="loading">Loading orders...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/farmer.js"></script>
+</body>
+</html>
